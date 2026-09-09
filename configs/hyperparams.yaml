@@ -1,0 +1,59 @@
+# These constants are FIXED across all modules and all techniques.
+# Changing a value here changes it everywhere. Never override in Python.
+seed: 42
+epochs: 3
+context_length: 1024
+eval_steps: 250
+warmup_ratio: 0.03
+lr_scheduler_type: "cosine"
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 16     # effective batch = 2 * 2 GPUs * 16 = 64 (unchanged)
+dataloader_num_workers: 8
+max_grad_norm: 1.0
+weight_decay: 0.01
+save_total_limit: 2
+logging_steps: 50
+
+learning_rates:
+  fft: 2.0e-5
+  lora: 2.0e-4
+  qlora: 2.0e-4
+  dora: 2.0e-4
+  ia3: 2.0e-4
+
+optimizer:
+  default: "adamw_bnb_8bit"
+  fft: "adamw_torch"
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  bias: "none"
+  use_rslora: false
+
+qlora:
+  bits: 4
+  quant_type: "nf4"
+  double_quant: true
+  compute_dtype: "bfloat16"
+
+ia3:
+  target_modules:
+    - "k_proj"
+    - "v_proj"
+    - "down_proj"
+  feedforward_modules:
+    - "down_proj"
+  init_ia3_weights: true
+
+bf16: true
+fp16: false

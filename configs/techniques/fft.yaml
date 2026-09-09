@@ -1,0 +1,7 @@
+technique: "fft"
+description: "Full Parameter Fine-Tuning with DeepSpeed ZeRO-3"
+uses_deepspeed: true
+deepspeed_config: "configs/deepspeed_zero3.json"
+uses_peft: false
+uses_quantization: false
+num_gpus: 1

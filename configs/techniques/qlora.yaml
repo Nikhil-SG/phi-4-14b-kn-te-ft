@@ -1,0 +1,8 @@
+technique: "qlora"
+description: "QLoRA: 4-bit NF4 quantization + LoRA adapters"
+uses_deepspeed: false
+uses_peft: true
+peft_type: "LORA"
+uses_quantization: true
+num_gpus: 1
+use_dora: false

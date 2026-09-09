@@ -1,0 +1,8 @@
+technique: "dora"
+description: "DoRA: Weight-Decomposed Low-Rank Adaptation"
+uses_deepspeed: false
+uses_peft: true
+peft_type: "LORA"
+uses_quantization: false
+num_gpus: 2
+use_dora: true

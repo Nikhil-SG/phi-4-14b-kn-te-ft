@@ -1,0 +1,8 @@
+model_id: "models/phi-4"
+tokenizer_id: "models/phi-4"
+hf_token: ""  # Optional: Hugging Face access token for gated models/private datasets. Falls back to CLI/cached login if blank.
+dtype: "bfloat16"
+max_context_length: 1024
+trust_remote_code: true
+use_cache: false
+attn_implementation: "flash_attention_2"  # flash-attn v2.8.3 installed; ~2-3x faster than eager on A100

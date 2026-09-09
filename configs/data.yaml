@@ -1,0 +1,125 @@
+datasets:
+  kannada:
+    hf_path: "ai4bharat/indic-align"
+    language_code: "kn"
+    allowed_subsets:
+      - "Dolly_T"
+      - "OpenAssistant_T"
+    subset_sampling: "proportional"
+    script_unicode_start: "0C80"
+    script_unicode_end: "0CFF"
+    target_train_samples: 18000
+    target_val_samples: 1000
+    target_test_samples: 1000
+    min_instruction_chars: 20
+    max_instruction_chars: 2048
+    min_output_chars: 10
+    max_output_chars: 2048
+  telugu:
+    hf_path: "ai4bharat/indic-align"
+    language_code: "te"
+    allowed_subsets:
+      - "Dolly_T"
+      - "OpenAssistant_T"
+    subset_sampling: "proportional"
+    script_unicode_start: "0C00"
+    script_unicode_end: "0C7F"
+    target_train_samples: 18000
+    target_val_samples: 1000
+    target_test_samples: 1000
+    min_instruction_chars: 20
+    max_instruction_chars: 2048
+    min_output_chars: 10
+    max_output_chars: 2048
+
+flores_hf_path: "facebook/flores"
+flores_language_codes:
+  kannada: "kan_Knda"
+  telugu: "tel_Telu"
+  english: "eng_Latn"
+flores_eval_split: "devtest"
+flores_eval_samples: 100
+
+data_output_dir: "data"
+results_dir: "results"
+seed: 42
+
+# English retention benchmarks (catastrophic forgetting detection)
+# Runs MMLU + MGSM + GPQA on the fine-tuned model to check if
+# English capabilities have degraded after Indic fine-tuning.
+# Data is downloaded via HF Hub (with hf_token auth) and cached
+# to data/english/{benchmark}/ for future runs.
+english_retention:
+  enabled: true
+  mmlu:
+    hf_path: "cais/mmlu"
+    config_name: "all"
+    n_samples: 500            # stratified subset across 57 subjects (~1-2 hrs)
+    n_few_shot: 5
+  mgsm:
+    hf_path: "juletxara/mgsm"
+    config_name: "en"
+    n_few_shot: 8
+  gpqa:
+    hf_path: "Idavidrein/gpqa"
+    config_name: "gpqa_main"
+    n_few_shot: 0
+
+# LLM-as-Judge — sarvamai/sarvam-m with thinking mode
+llm_judge:
+  judge_model_id: "models/sarvam-m"
+  enable_thinking: true
+  n_samples: 50
+  max_new_tokens: 512
+  judge_max_new_tokens: 2048
+  log_thinking_traces: true
+  language_properties:
+    kannada:
+      script_name: "Kannada script (Kannada lipi)"
+      unicode_range: "U+0C80–U+0CFF"
+      script_features: "agglutinative morphology, virama conjuncts, Sandhi junctions"
+    telugu:
+      script_name: "Telugu script (Telugu lipi)"
+      unicode_range: "U+0C00–U+0C7F"
+      script_features: "agglutinative morphology, ottulu conjuncts, Sandhi junctions"
+  dimensions:
+    script_adherence:
+      max_score: 2
+    instruction_relevance:
+      max_score: 3
+    fluency:
+      max_score: 3
+  total_max_score: 8
+
+# Prompt Sensitivity Delta
+prompt_sensitivity:
+  dataset_hf_path: "data/mmlu-indic"
+  fallback_hf_path: "sarvamai/mmlu-indic"
+  n_questions: 100
+  templates:
+    standard:
+      system: null
+      prefix: "Answer the following multiple choice question."
+      suffix: "Answer:"
+    system_role:
+      system: "You are a helpful and knowledgeable {language_name} assistant."
+      prefix: "Answer the following multiple choice question."
+      suffix: "Answer:"
+    few_shot:
+      n_examples: 3
+      prefix: "Here are example questions with answers, followed by a new question."
+      suffix: "Answer:"
+
+# COMET
+comet:
+  model_name: "Unbabel/wmt22-comet-da"
+  batch_size: 8
+  gpus: 1
+  enabled: true
+  saving_directory: "models"
+
+# BERTScore
+bertscore:
+  model_type: "models/muril-base-cased"
+  enabled: true
+  batch_size: 32

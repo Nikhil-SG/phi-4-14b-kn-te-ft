@@ -1,0 +1,7 @@
+technique: "ia3"
+description: "IA³: Inhibiting and Amplifying Inner Activations"
+uses_deepspeed: false
+uses_peft: true
+peft_type: "IA3"
+uses_quantization: false
+num_gpus: 2
